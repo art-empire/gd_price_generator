@@ -345,11 +345,11 @@ def get_img_path():
 
 def get_price():
     user_groups = {
-        11:11,
-        10:3,
-        12:7,
-        8:10,
-        9:15,
+       '- 11% от 110000р': 33*11,
+       '- 3% от 30000р': 33*3,
+       '- 7% от 70000р':33*7,
+       'Мелкий опт от 10шт.':33,
+       'Опт. от 15000р': 33*120
     }
 
 
@@ -367,9 +367,9 @@ def get_price():
 
         for key, value in user_groups.items():
             new_row = {
-                'Product Code': product_code,
+                'Product code': product_code,
                 'Language': 'ru',
-                'Price':999,
+                'Price':get_int(row.price),
                 'Percentage discount':value,
                 'Lower limit': 1,
                 'User group': key
