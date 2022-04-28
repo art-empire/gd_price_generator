@@ -7,8 +7,6 @@ from slugify import slugify
 from pathlib import Path
 
 import time
-# from natsort import natsort_key
-# from natsort import natsorted
 import natsort
 
 import json
@@ -337,45 +335,7 @@ def main():
 
         data = np.append(data, np.array(new_row))
 
-        # data = np.concatenate((data, new_rows), axis=0)
 
-        #
-        #     quantity = get_int(row[size + '_size'])
-        #     if quantity < 1:
-        #         continue    # пропускаем товары с нулевым количеством
-        #     code = get_str(row.product_code)
-        #     product_code = '%s-%s' % (code, size.upper())
-        #     brand = get_str(row.brand)
-        #     slug_brand = slugify(brand)
-        #     images = row.images
-        #
-        #
-        #     new_row = {
-        #         'Product Code': product_code,
-        #         'Product name': name,
-        #         'Category': get_str(row.category),
-        #         'Quantity': quantity,
-        #         'Variation group code': variation_group_code,
-        #
-        #         'Price' : get_int(row.price),
-        #         'List price' : get_int(row.list_price),
-        #
-        #         'Размер': size.upper(),
-        #         'Цвет': get_str(row.color),
-        #         'Бренд': brand,
-        #         'Артикул': code,
-        #         'Уход за вещами': get_str(row.product_care),
-        #         'Пол': get_str(row.gender),
-        #         'Страна':get_str(row.country),
-        #
-        #         'Состав': get_str(row.consists),
-        #         'Description': get_str(row.description_ru),
-        #         'Images': images
-        #     }
-        #
-        #     new_rows = np.append(new_rows, np.array(new_row))
-        #
-        # data = np.concatenate((data, new_rows), axis=0)
     res_df = res_df.append(list(data), ignore_index=True)
 
     print(res_df)
@@ -423,6 +383,49 @@ def get_img_path():
 
     print('Изображения найдены и сохранены в imgsfile.csv за %s секунд.' % (time.time() - start_time))
 
+def get_price():
+    user_groups = {
+       '- 11% от 110000р': 33*11,
+       '- 3% от 30000р': 33*3,
+       '- 7% от 70000р':33*7,
+       'Мелкий опт от 10шт.':33,
+       'Опт. от 15000р': 33*120
+    }
+
+
+    res_df = pd.DataFrame()
+
+    data = np.array([])
+
+    for i, row in df_opt.iterrows():
+
+        quantity = get_int(row.total_count)
+        if quantity < 1:
+            continue  # пропускаем товары с нулевым количеством
+        code = get_str(row.product_code)
+        product_code = code
+
+        for key, value in user_groups.items():
+            new_row = {
+                'Product code': product_code,
+                'Language': 'ru',
+                'Price':get_int(row.price),
+                'Percentage discount':value,
+                'Lower limit': 1,
+                'User group': key
+                # 'Product name': name,
+                # 'Category': get_str(row.category),
+                # 'Quantity': quantity,
+                # 'Variation group code': variation_group_code,
+            }
+
+            data = np.append(data, np.array(new_row))
+
+    res_df = res_df.append(list(data), ignore_index=True)
+
+    print(res_df)
+
+    res_df.to_csv('opt_price.csv', encoding='utf-8', index=False, sep='\t')
 
 def get_video_path():
     # path = Path('./images/products/good-fluro-power/14-1530/')
@@ -472,8 +475,7 @@ df_imgs = init_imgs()
 df_vids = init_vids()
 main()
 
-# my_path = Path('.')
-# print(list(my_path.rglob('./gd/*b.jpg')))
+get_price()
 
 print('Общее время работы:  %s секунд.' % (time.time() - start_time))
 
