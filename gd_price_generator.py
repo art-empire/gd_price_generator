@@ -45,8 +45,8 @@ def init_main():
     }
 
     df_opt = pd.read_excel(
-        # 'good-opt.xls',
-        'good-opt-min.xls',
+        'good-opt.xls',
+        # 'good-opt-min.xls',
         'Каталог Молодежной одежды GOOD',
         usecols=opt_cols.keys(),
         names=opt_cols.values(),
@@ -116,6 +116,24 @@ def init_imgs():
 
     return df_imgs
 
+def init_vids():
+    start_time = time.time()
+    print('Считываем каталог видео.')
+    vids_cols = {
+        0: 'product_code',
+        1: 'videos',
+    }
+    df_vids = pd.read_csv(
+        'videosfile.csv',
+        sep='\t',
+        usecols=vids_cols.keys(),
+        names=vids_cols.values(),
+        dtype=str,
+        index_col=None,
+    )
+    print('Вспомогательный каталог видео обработан за %s секунд.' % (time.time() - start_time))
+
+    return df_vids
 
 def pause():
     # os.system('pause')
@@ -129,6 +147,7 @@ def get_int(value):
 
 def get_str(value):
     return str(value).strip()
+
 
 def get_bool(value):
     return 'Y' if value else 'N'
@@ -204,6 +223,7 @@ def main():
     # result_df = pd.concat([df_opt, df_info], axis=1, join="inner", on='code')
     temp_df = df_opt.merge(df_info, how='inner', on='product_code')
     temp_df = temp_df.merge(df_imgs, how='inner', on='product_code')
+    temp_df = temp_df.merge(df_vids, how='inner', on='product_code')
     print('Каталоги обьединены.')
 
     temp_df['category'] = temp_df.apply(
@@ -236,6 +256,7 @@ def main():
         brand = get_str(row.brand)
         slug_brand = slugify(brand)
         images = row.images
+        videos = row.videos
 
         s = []
         stock = {}
@@ -254,7 +275,20 @@ def main():
             # else:
             #     s.append('%s%s' % (size.upper(), '///status=D'))
 
-        s = '(Gooood) Размер: SG[%s]' % ', '.join(s)
+        size_option = '(Gooood) Размер: SG[%s]' % ', '.join(s)
+
+        s = []
+        stock = {}
+        for size in sizes:
+            size_count = get_int(row[size + '_size'])
+            stock[size.upper()] = size_count
+
+            if size_count > 0:
+                s.append('%s' % size.upper())
+
+            # s.append('%s' % size.upper())
+
+        size_feature = '%s' % '///'.join(s)
 
         e = []
 
@@ -262,7 +296,10 @@ def main():
             e.append('Светится в темноте')
         if effects['glow_in_the_uv']:
             e.append('Светится в ультрафиолете')
-        effects_features = '(Gooood) Эффекты: SG[%s]' % ', '.join(e)
+        # effects_features = 'Эффекты: S[%s]' % ', '.join(e)
+        effects_features = '%s' % '///'.join(e)
+
+        popularity = (10000 - i) * 10000
 
         new_row = {
             'Product Code': product_code,
@@ -282,17 +319,20 @@ def main():
             'Уход за вещами': get_str(row.product_care),
             'Пол': get_str(row.gender),
             'Страна': get_str(row.country),
-            'Options': s,
+            'Options': size_option,
             # 'Features': s,
             'Стикеры': json.dumps(stickers),
             # 'Светится в темноте': get_bool(effects['glow_in_the_dark']),
             # 'Светится в ультрафмолете': get_bool(effects['glow_in_the_uv']),
+            'Размер для фильтров': size_feature,
             'Эффекты': effects_features,
             'Раздел': get_str(row.product_type),
             'Количество в наличии': json.dumps(stock),
             'Состав': get_str(row.consists),
             'Description': get_str(row.description_ru),
-            'Images': images
+            'Images': images,
+            'Videos': videos,
+            'Popularity': popularity
         }
 
         data = np.append(data, np.array(new_row))
@@ -384,6 +424,41 @@ def get_img_path():
     print('Изображения найдены и сохранены в imgsfile.csv за %s секунд.' % (time.time() - start_time))
 
 
+def get_video_path():
+    # path = Path('./images/products/good-fluro-power/14-1530/')
+    # print(list(str(x) for x in path.glob('**/*')))
+
+    print('Поиск видео в ./video/products/{brand}/{sku}/')
+
+    res_df = pd.DataFrame()
+    data = np.array([])
+    new_rows = np.array([])
+
+    for i, row in df_opt.iterrows():
+        # new_row = np.array([])
+        # print('%s\t%s' % (slugify(row.brand), get_str(row.product_code)))
+        path = Path('./video/products/%s/%s/' % (slugify(row.brand), get_str(row.product_code)))
+        vids = list(str(x) for x in natsort.natsorted(path.glob('**/*'), alg=natsort.PATH))
+        # imgs = list(str(x) for x in sorted(path.glob('**/*'), key=natsort_key))
+        print(vids)
+        videos = '///'.join(vids)
+
+        new_row = {
+            'Product Code': row.product_code,
+            'Videos': videos
+        }
+        new_rows = np.append(new_rows, np.array(new_row))
+
+    # new_rows = np.array()
+    # data = np.concatenate((data, new_rows), axis=0)
+
+    res_df = res_df.append(list(new_rows), ignore_index=True)
+
+    res_df.to_csv('videosfile.csv', encoding='utf-8', index=False, sep='\t')
+
+    print('Видео найдены и сохранены в videosfile.csv за %s секунд.' % (time.time() - start_time))
+
+
 start_time = time.time()
 print('Начали работу.')
 
@@ -391,9 +466,10 @@ df_opt = init_main()
 df_info = init_info()
 # get_imgs()
 # get_img_path()
-
+# get_video_path()
 
 df_imgs = init_imgs()
+df_vids = init_vids()
 main()
 
 # my_path = Path('.')
