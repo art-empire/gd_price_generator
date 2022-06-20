@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-import pandas
 import pandas as pd
 import numpy as np
 from slugify import slugify
@@ -10,6 +9,8 @@ import time
 import natsort
 
 import json
+
+from src.main import PriceGenerator
 
 
 def init_main():
@@ -27,19 +28,31 @@ def init_main():
         8: 'consists',
         9: 'price',
         10: 'list_price',
-        18: 'total_count',
-        19: 'ns_size',
-        20: '3xs_size',
-        21: '2xs_size',
-        22: 'xs_size',
-        23: 's_size',
-        24: 'm_size',
-        25: 'l_size',
-        26: 'xl_size',
-        27: '2xl_size',
-        28: '3хl_size',
-        29: '4хl_size',
-        30: '5xl_size',
+
+        11: 'small_opt_price',
+        13: 'opt_price',
+        14: 'price-3',
+        15: 'price-7',
+        16: 'price-11',
+        17: 'price-10',
+        18: 'price-15',
+        19: 'price-20',
+        20: 'price-22',
+        21: 'price-25',
+
+        23: 'total_count',
+        24: 'ns_size',
+        25: '3xs_size',
+        26: '2xs_size',
+        27: 'xs_size',
+        28: 's_size',
+        29: 'm_size',
+        30: 'l_size',
+        31: 'xl_size',
+        32: '2xl_size',
+        33: '3хl_size',
+        34: '4хl_size',
+        35: '5xl_size',
     }
 
     df_opt = pd.read_excel(
@@ -114,6 +127,7 @@ def init_imgs():
 
     return df_imgs
 
+
 def init_vids():
     start_time = time.time()
     print('Считываем каталог видео.')
@@ -132,6 +146,7 @@ def init_vids():
     print('Вспомогательный каталог видео обработан за %s секунд.' % (time.time() - start_time))
 
     return df_vids
+
 
 def pause():
     # os.system('pause')
@@ -335,7 +350,6 @@ def main():
 
         data = np.append(data, np.array(new_row))
 
-
     res_df = res_df.append(list(data), ignore_index=True)
 
     print(res_df)
@@ -383,15 +397,20 @@ def get_img_path():
 
     print('Изображения найдены и сохранены в imgsfile.csv за %s секунд.' % (time.time() - start_time))
 
+
 def get_price():
     user_groups = {
-       '- 11% от 110000р': 33*11,
-       '- 3% от 30000р': 33*3,
-       '- 7% от 70000р':33*7,
-       'Мелкий опт от 10шт.':33,
-       'Опт. от 15000р': 33*120
+        '- 11% от 110000р': {'row': 'price-11', 'group_id': 11},
+        '- 3% от 30000р': {'row': 'price-3', 'group_id': 10},
+        '- 7% от 70000р': {'row': 'price-7', 'group_id': 12},
+        'Мелкий опт от 10шт.': {'row': 'small_opt_price', 'group_id': 8},
+        'Опт. от 15000р': {'row': 'opt_price', 'group_id': 9},
+        '-10% от оптовой цены': {'row': 'price-10', 'group_id': 23},
+        '-15% от оптовой цены': {'row': 'price-15', 'group_id': 24},
+        '-20% от оптовой цены': {'row': 'price-20', 'group_id': 25},
+        '-22% от оптовой цены': {'row': 'price-22', 'group_id': 26},
+        '-25% от оптовой цены': {'row': 'price-25', 'group_id': 27},
     }
-
 
     res_df = pd.DataFrame()
 
@@ -409,10 +428,11 @@ def get_price():
             new_row = {
                 'Product code': product_code,
                 'Language': 'ru',
-                'Price':get_int(row.price),
-                'Percentage discount':value,
+                'Price': get_int(row[value['row']]),
+                # 'Percentage discount':value,
                 'Lower limit': 1,
-                'User group': key
+                'User group': key,
+                # 'Название группы': key
                 # 'Product name': name,
                 # 'Category': get_str(row.category),
                 # 'Quantity': quantity,
@@ -426,6 +446,7 @@ def get_price():
     print(res_df)
 
     res_df.to_csv('opt_price.csv', encoding='utf-8', index=False, sep='\t')
+
 
 def get_video_path():
     # path = Path('./images/products/good-fluro-power/14-1530/')
@@ -444,7 +465,8 @@ def get_video_path():
         vids = list(str(x) for x in natsort.natsorted(path.glob('**/*'), alg=natsort.PATH))
         # imgs = list(str(x) for x in sorted(path.glob('**/*'), key=natsort_key))
         print(vids)
-        videos = '///'.join(vids)
+        # videos = '///'.join(vids)
+        videos = json.dumps(vids)
 
         new_row = {
             'Product Code': row.product_code,
@@ -465,17 +487,21 @@ def get_video_path():
 start_time = time.time()
 print('Начали работу.')
 
-df_opt = init_main()
-df_info = init_info()
-# get_imgs()
+# df_opt = init_main()
+# df_info = init_info()
+# # get_imgs()
 # get_img_path()
 # get_video_path()
+#
+# df_imgs = init_imgs()
+# df_vids = init_vids()
+# main()
+#
+# get_price()
 
-df_imgs = init_imgs()
-df_vids = init_vids()
-main()
+my_price_generator = PriceGenerator()
+my_price_generator.get_price()
 
-get_price()
 
 print('Общее время работы:  %s секунд.' % (time.time() - start_time))
 
