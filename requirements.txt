@@ -1,0 +1,6 @@
+wheel
+pandas
+slugify
+natsort
+xlrd
+unicode
