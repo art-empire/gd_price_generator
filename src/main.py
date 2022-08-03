@@ -12,6 +12,7 @@ from .settings import *
 from .settingslocal import *
 from functools import reduce
 
+import re
 
 class PriceGenerator:
     data_frame = None
@@ -67,7 +68,9 @@ class PriceGenerator:
         return data_frame
 
     def get_int(self, value):
-        return int(str(value).strip() or 0)
+        res = str(value).strip()
+        res = re.sub('[^0-9]', '0', res)
+        return int(res or 0)
 
     def get_str(self, value):
         return str(value).strip()
@@ -208,6 +211,7 @@ class PriceGenerator:
             stock = {}
 
             for size in SIZES:
+                print(f'{product_code}: {row[size + "_size"]}')
                 size_count = self.get_int(row[size + '_size'])
                 stock[size.upper()] = size_count
                 s.append('%s' % size.upper())
