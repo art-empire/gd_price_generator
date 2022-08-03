@@ -9,6 +9,7 @@ from slugify import slugify
 from pathlib import Path
 
 from .settings import *
+from .settingslocal import *
 from functools import reduce
 
 
