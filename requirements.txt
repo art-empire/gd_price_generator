@@ -1,6 +1,6 @@
 wheel
 pandas
-slugify
+python-slugify
 natsort
 xlrd
 unicode
