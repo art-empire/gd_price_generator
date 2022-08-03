@@ -298,7 +298,7 @@ class PriceGenerator:
         self.data_frame = reduce(lambda x, y: pd.merge(x, y, on='product_code'), df_list)
 
         # Вырезаем все не в наличии
-        self.data_frame = self.data_frame[self.data_frame.total_count != '0']
+        # self.data_frame = self.data_frame[self.data_frame.total_count != '0']
 
         # Ищем изображения
         self.get_media_files_path('images')
