@@ -303,7 +303,7 @@ class PriceGenerator:
             slug_brand = slugify(brand)
 
             images = self.get_str(row.images)
-            video = self.get_str(row.video)
+            video = json.dumps(list(filter(None, row.video.split('///'))))
 
             s = []
             stock = {}
