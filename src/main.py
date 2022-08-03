@@ -23,27 +23,6 @@ class PriceGenerator:
         old_time_stamp = old_time if old_time else self.time_stamp
         print('[%.5f] %s' % (new_time_stamp - old_time_stamp, message))
 
-    # def init_imgs(s):
-    #     start_time = time.time()
-    #     print('Считываем каталог изображений.')
-    #     imgs_cols = {
-    #         0: 'product_code',
-    #         1: 'images',
-    #     }
-    #     df_imgs = pd.read_csv(
-    #         'imgsfile.csv',
-    #         sep='\t',
-    #         usecols=imgs_cols.keys(),
-    #         names=imgs_cols.values(),
-    #         dtype=str,
-    #         index_col=None,
-    #         # skiprows=8
-    #     )
-    #
-    #     # df_imgs.fillna('', inplace=True)  # Заменяем NaN на 0
-    #     print('Вспомогательный каталог изображений обработан за %s секунд.' % (time.time() - start_time))
-    #
-    #     return df_imgs
 
     def _init_data_frame(self, xls_file_config):
         self._print_message('Считываем файл %s.' % xls_file_config['file'])
@@ -96,56 +75,6 @@ class PriceGenerator:
     def get_bool(self, value):
         return 'Y' if value else 'N'
 
-    # def get_img_path(self):
-        # path = Path('./images/products/good-fluro-power/14-1530/')
-        # print(list(str(x) for x in path.glob('**/*')))
-
-        # self._print_message('Поиск изображений в ./images/products/{brand}/{sku}/')
-        #
-        # data_frame = pd.DataFrame(columns=['Product Code','Images'])
-        # new_rows = np.array([])
-        #
-        # img_count = 0
-        # no_img_list = []
-        #
-        # for i, row in self.data_frame.iterrows():
-        #     images_products_path = Path('images', 'products')
-        #     brand_product_code_path = Path(slugify(row.brand), self.get_str(row.product_code))
-        #     file_path = self.media_path / images_products_path / brand_product_code_path
-        #     img_list = natsort.natsorted(file_path.glob('./*.jpg'), alg=natsort.PATH)
-        #     imgs = list(
-        #         os.path.relpath(x, self.media_path) for x in img_list
-        #     )
-        #     img_count += 1
-        #     if len(imgs) < 1:
-        #         no_img_list.append(row.product_code)
-        #
-        #     print('%s: %s' % (row.product_code.ljust(20), list(str(os.path.relpath(x, file_path)) for x in imgs)))
-        #
-        #     images = '///'.join(imgs)
-        #     new_row = {
-        #         'Product Code': row.product_code,
-        #         'Images': images
-        #     }
-        #     new_rows = np.append(new_rows, np.array(new_row))
-        #
-        # new_rows_frame = pd.DataFrame(list(new_rows), columns=data_frame.columns)
-        # data_frame = pd.concat([data_frame,new_rows_frame], ignore_index=True)
-        #
-        #
-        # self._print_message('Обработано %s артиклей' % img_count)
-        # if no_img_list :
-        #     with open(BASE_DIR / 'no_img_list.txt', 'w') as outfile:
-        #         outfile.write("\n".join(no_img_list))
-        #     self._print_message('У %s из них нет ни одного изображения' % len(no_img_list))
-        #     self._print_message('Список этих артиклей записан в no_img_list.txt')
-        # try:
-        #     data_frame.to_csv(BASE_DIR / 'imgs_file.csv', encoding='utf-8', index=False, sep='\t')
-        #     self._print_message('Найденые изображения сохранены в imgs_file.csv')
-        # except:
-        #     self._print_message('=====================================')
-        #     self._print_message('| Не удалось записать imgs_file.csv |')
-        #     self._print_message('=====================================')
 
 
     def get_media_files_path(self, media_type = 'images'):
@@ -189,12 +118,6 @@ class PriceGenerator:
 
             data = np.append(data, np.array(new_row))
 
-        # res_df = res_df.append(list(data), ignore_index=True)
-
-        # new_rows = np.append(new_rows, np.array(new_row))
-
-        # new_rows_frame = pd.DataFrame(list(new_rows), columns=data_frame.columns)
-        # data_frame = pd.concat([data_frame, new_rows_frame], ignore_index=True)
 
         data_frame = pd.DataFrame(list(data), columns=data_frame.columns)
 
@@ -261,35 +184,10 @@ class PriceGenerator:
             m = ['%s///%s' % (x.strip(), y.strip()) for x in a for y in b]
             return '; '.join(m)
 
-        # def get_type(category):
-        #     res = ''
-        #     if len(category) > 1:
-        #         pass
-        #     else:
-        #         res = category[0]
-        #     return res
-
-        # result_df = pd.concat([df_opt, df_info], axis=1, join="inner", on='code')
-        # temp_df = df_opt.merge(df_info, how='inner', on='product_code')
-        # temp_df = temp_df.merge(df_imgs, how='inner', on='product_code')
-        # temp_df = temp_df.merge(df_vids, how='inner', on='product_code')
-        # print('Каталоги обьединены.')
-
-        # temp_df['category'] = temp_df.apply(
-        #     lambda row: get_categories(row.l1_category.split(';'), row.l2_category.split(';')), axis=1)
-        # temp_df['category_slug'] = temp_df.apply(
-        #     lambda row: ' '.join([row.l1_category.split(';')[0], row.l2_category.split(';')[0]]), axis=1)
-        # # temp_df['type'] = temp_df.apply(
-        # #     lambda row: get_type(row.l1_category.split(';')), axis=1)
-        # temp_df.drop(['l1_category', 'l2_category'], axis=1, inplace=True)
-        # print('Обработаны категории.')
-
 
         self.data_frame['category'] = self.data_frame.apply(lambda row: get_categories(row.l1_category.split(';'), row.l2_category.split(';')), axis=1)
         self.data_frame['category_slug'] =self.data_frame.apply(lambda row: ' '.join([row.l1_category.split(';')[0], row.l2_category.split(';')[0]]), axis=1)
 
-
-        # res_df = pd.DataFrame()
 
         data = np.array([])
 
