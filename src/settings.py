@@ -70,7 +70,7 @@ xls_files_list = {
             35: '5xl_size',
         },
         'skip_rows': 8,
-        'skip_empty_fields': ['product_code', 'product_name'],
+        'skip_empty_fields': ['product_code',],
     },
     'good_info': {
         'file': BASE_DIR.parent / 'price' / 'good-info.xls',
