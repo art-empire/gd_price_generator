@@ -25,7 +25,7 @@ warm_varnish() {
   echo "Done warming cache for $1"
 }
 
-warm_varnish gooood.ru
+time warm_varnish gooood.ru
 
 for host in "$@"; do
   warm_varnish $host
