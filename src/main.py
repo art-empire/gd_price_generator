@@ -211,7 +211,7 @@ class PriceGenerator:
             stock = {}
 
             for size in SIZES:
-                print(f'{product_code}: {row[size + "_size"]}')
+                # print(f'{product_code}: {row[size + "_size"]}')
                 size_count = self.get_int(row[size + '_size'])
                 stock[size.upper()] = size_count
                 s.append('%s' % size.upper())
