@@ -210,20 +210,32 @@ class PriceGenerator:
             s = []
             stock = {}
 
-            for size in SIZES:
-                # print(f'{product_code}: {row[size + "_size"]}')
+            for idx, size in enumerate(SIZES):
                 size_count = self.get_int(row[size + '_size'])
+                if not ('Детское' in row.l1_category.split(';')):
+                    size_name = size.upper()
+                else:
+                    size_name = SIZES_K[idx].upper()
+                    print(size_name)
+
                 stock[size.upper()] = size_count
-                s.append('%s' % size.upper())
+                s.append('%s' % size_name)
+
+
             size_option = '(Gooood) Размер: SG[%s]' % ', '.join(s)
 
             s = []
             stock = {}
-            for size in SIZES:
+
+            for idx, size in enumerate(SIZES):
+                if not ('Детское' in row.l1_category.split(';')):
+                    size_name = size.upper()
+                else:
+                    size_name = SIZES_K[idx].upper()
                 size_count = self.get_int(row[size + '_size'])
-                stock[size.upper()] = size_count
+                stock[size_name.upper()] = size_count
                 if size_count > 0:
-                    s.append('%s' % size.upper())
+                    s.append('%s' % size_name.upper())
 
             size_feature = '%s' % '///'.join(s)
 
