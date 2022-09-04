@@ -216,7 +216,6 @@ class PriceGenerator:
                     size_name = size.upper()
                 else:
                     size_name = SIZES_K[idx].upper()
-                    print(size_name)
 
                 stock[size.upper()] = size_count
                 s.append('%s' % size_name)
