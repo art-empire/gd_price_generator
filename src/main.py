@@ -215,8 +215,9 @@ class PriceGenerator:
                 stock[size.upper()] = size_count
 
             for index, size in enumerate(SIZES_K):
+
                 if is_kids:
-                    size_count = self.get_int(row[SIZES[index] + '_size'])
+                    size_count = self.get_int(row[SIZES[index+1] + '_size'])
                 else:
                     size_count = 0
                 if size_count > 0:
@@ -224,7 +225,7 @@ class PriceGenerator:
                 stock[size.upper()] = size_count
 
             size_feature = '%s' % '///'.join(s)
-            size_option = '(Gooood) Размер: SG[%s]' % ', '.join(list(x.upper() for x in set(SIZES + SIZES_K)))
+            size_option = '(Gooood) Размер: SG[%s]' % ', '.join(list(x.upper() for x in SIZES + SIZES_K))
 
             # s = []
             # stock = {}
