@@ -9,10 +9,10 @@ from slugify import slugify
 from pathlib import Path
 
 from .settings import *
-from .settingslocal import *
 from functools import reduce
 
 import re
+
 
 class PriceGenerator:
     data_frame = None
@@ -23,7 +23,6 @@ class PriceGenerator:
         new_time_stamp = time.time()
         old_time_stamp = old_time if old_time else self.time_stamp
         print('[%.5f] %s' % (new_time_stamp - old_time_stamp, message))
-
 
     def _init_data_frame(self, xls_file_config):
         self._print_message('Считываем файл %s.' % xls_file_config['file'])
@@ -78,9 +77,7 @@ class PriceGenerator:
     def get_bool(self, value):
         return 'Y' if value else 'N'
 
-
-
-    def get_media_files_path(self, media_type = 'images'):
+    def get_media_files_path(self, media_type='images'):
         self._print_message('Начинаем поиск файлов в ./%s/products/{brand}/{sku}/' % media_type)
 
         data_frame = pd.DataFrame(columns=['product_code', media_type])
@@ -121,7 +118,6 @@ class PriceGenerator:
 
             data = np.append(data, np.array(new_row))
 
-
         data_frame = pd.DataFrame(list(data), columns=data_frame.columns)
 
         print(data_frame)
@@ -142,7 +138,6 @@ class PriceGenerator:
             self._print_message('=====================================')
             self._print_message('| Не удалось записать  ./out/%s_files.csv |' % media_type)
             self._print_message('=====================================')
-
 
     def get_product_name(self, value):
         list = value.split('\n')
@@ -180,22 +175,20 @@ class PriceGenerator:
 
         return name, effects, stickers
 
-
     def get_main_price(self):
 
         def get_categories(a, b):
             m = ['%s///%s' % (x.strip(), y.strip()) for x in a for y in b]
             return '; '.join(m)
 
-
-        self.data_frame['category'] = self.data_frame.apply(lambda row: get_categories(row.l1_category.split(';'), row.l2_category.split(';')), axis=1)
-        self.data_frame['category_slug'] =self.data_frame.apply(lambda row: ' '.join([row.l1_category.split(';')[0], row.l2_category.split(';')[0]]), axis=1)
-
+        self.data_frame['category'] = self.data_frame.apply(
+            lambda row: get_categories(row.l1_category.split(';'), row.l2_category.split(';')), axis=1)
+        self.data_frame['category_slug'] = self.data_frame.apply(
+            lambda row: ' '.join([row.l1_category.split(';')[0], row.l2_category.split(';')[0]]), axis=1)
 
         data = np.array([])
 
         for i, row in self.data_frame.iterrows():
-
 
             name, effects, stickers = self.get_product_name(row.product_name)
             quantity = self.get_int(row.total_count)
@@ -207,40 +200,67 @@ class PriceGenerator:
             images = self.get_str(row.images)
             video = json.dumps(list(filter(None, row.video.split('///'))))
 
-            s = []
-            stock = {}
-
-            for idx, size in enumerate(SIZES):
-                size_count = self.get_int(row[size + '_size'])
-                if not ('Детское' in row.l1_category.split(';')):
-                    size_name = size.upper()
-                else:
-                    size_name = SIZES_K[idx].upper()
-                    size_name = size.upper()
-
-                stock[size.upper()] = size_count
-                s.append('%s' % size_name)
-
-
-            size_option = '(Gooood) Размер: SG[%s]' % ', '.join(s)
 
             s = []
             stock = {}
 
-            for idx, size in enumerate(SIZES):
-                if not ('Детское' in row.l1_category.split(';')):
-                    size_name = size.upper()
+            is_kids = 'Детское' in row.l1_category.split(';')
+
+            for size in SIZES:
+                if is_kids:
+                    size_count = 0
                 else:
-                    size_name = SIZES_K[idx].upper()
-                    size_name = size.upper()
-                    
-                size_count = self.get_int(row[size + '_size'])
-                stock[size_name.upper()] = size_count
+                    size_count = self.get_int(row[size + '_size'])
                 if size_count > 0:
-                    s.append('%s' % size_name.upper())
+                    s.append('%s' % size.upper())
+                stock[size.upper()] = size_count
+
+            for index, size in enumerate(SIZES_K):
+                if is_kids:
+                    size_count = self.get_int(row[SIZES[index] + '_size'])
+                else:
+                    size_count = 0
+                if size_count > 0:
+                    s.append('%s' % size.upper())
+                stock[size.upper()] = size_count
+
 
             size_feature = '%s' % '///'.join(s)
+            size_option = '(Gooood) Размер: SG[%s]' % ', '.join(list(set(SIZES + SIZES_K)))
 
+            # s = []
+            # stock = {}
+            #
+            # for idx, size in enumerate(SIZES):
+            #     size_count = self.get_int(row[size + '_size'])
+            #     if not ('Детское' in row.l1_category.split(';')):
+            #         size_name = size.upper()
+            #     else:
+            #         size_name = SIZES_K[idx].upper()
+            #         size_name = size.upper()
+            #
+            #     stock[size.upper()] = size_count
+            #     s.append('%s' % size_name)
+            #
+            #
+            # size_option = '(Gooood) Размер: SG[%s]' % ', '.join(s)
+            #
+            # s = []
+            # stock = {}
+            #
+            # for idx, size in enumerate(SIZES):
+            #     if not ('Детское' in row.l1_category.split(';')):
+            #         size_name = size.upper()
+            #     else:
+            #         size_name = SIZES_K[idx].upper()
+            #         size_name = size.upper()
+            #
+            #     size_count = self.get_int(row[size + '_size'])
+            #     stock[size_name.upper()] = size_count
+            #     if size_count > 0:
+            #         s.append('%s' % size_name.upper())
+            #
+            # size_feature = '%s' % '///'.join(s)
 
             e = []
             if effects['glow_in_the_dark']:
@@ -281,7 +301,6 @@ class PriceGenerator:
         res_df = pd.DataFrame(list(data))
         res_df.to_csv(BASE_DIR / 'out' / 'main_price.csv', encoding='utf-8', index=False, sep='\t')
 
-
     def get_opt_price(self):
         data = np.array([])
         for i, row in self.data_frame.iterrows():
@@ -298,8 +317,7 @@ class PriceGenerator:
 
         res_df = pd.DataFrame(list(data))
         print(res_df)
-        res_df.to_csv(BASE_DIR / 'out' /'opt_price.csv', encoding='utf-8', index=False, sep='\t')
-
+        res_df.to_csv(BASE_DIR / 'out' / 'opt_price.csv', encoding='utf-8', index=False, sep='\t')
 
     def get_price(self):
 
