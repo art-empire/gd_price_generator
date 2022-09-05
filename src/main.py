@@ -200,7 +200,6 @@ class PriceGenerator:
             images = self.get_str(row.images)
             video = json.dumps(list(filter(None, row.video.split('///'))))
 
-
             s = []
             stock = {}
 
@@ -224,9 +223,8 @@ class PriceGenerator:
                     s.append('%s' % size.upper())
                 stock[size.upper()] = size_count
 
-
             size_feature = '%s' % '///'.join(s)
-            size_option = '(Gooood) Размер: SG[%s]' % ', '.join(list(set(SIZES + SIZES_K)))
+            size_option = '(Gooood) Размер: SG[%s]' % ', '.join(list(x.upper() for x in set(SIZES + SIZES_K)))
 
             # s = []
             # stock = {}
