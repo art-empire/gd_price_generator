@@ -62,6 +62,10 @@ class PriceGenerator:
         for item in xls_file_config['skip_empty_fields']:
             data_frame = data_frame[data_frame[item] != 0]
 
+        # Пропукаем строки где бренд в списке
+        for item in xls_file_config['skip_brands']:
+            data_frame = data_frame[data_frame['brand'] != item]
+
         self._print_message('Обработан файл %s.' % xls_file_config['file'])
 
         return data_frame

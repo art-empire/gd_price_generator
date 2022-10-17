@@ -86,7 +86,13 @@ xls_files_list = {
             35: '5xl_size',
         },
         'skip_rows': 8,
-        'skip_empty_fields': ['product_code',],
+        'skip_empty_fields': ['product_code', ],
+        'skip_brands': [
+            'АРТимперия',
+            'Fandesire',
+            # 'GOOD FLURO POWER',
+            # 'TON'
+        ],
     },
     'good_info': {
         # 'file': BASE_DIR / 'in' / 'good-info.xls',
@@ -103,6 +109,7 @@ xls_files_list = {
         },
         'skip_rows': 8,
         'skip_empty_fields': ['product_code', ],
+        'skip_brands': [],
     },
     'images': {
         'file': BASE_DIR / 'out' / 'images_files.csv',
@@ -111,7 +118,8 @@ xls_files_list = {
             1: 'images'
         },
         'skip_rows': 0,
-        'skip_empty_fields': []
+        'skip_empty_fields': [],
+        'skip_brands': [],
     },
     'video': {
         'file': BASE_DIR / 'out' / 'video_files.csv',
@@ -120,7 +128,8 @@ xls_files_list = {
             1: 'video'
         },
         'skip_rows': 0,
-        'skip_empty_fields': []
+        'skip_empty_fields': [],
+        'skip_brands': [],
     }
 
 }
