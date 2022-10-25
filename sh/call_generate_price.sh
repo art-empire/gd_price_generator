@@ -8,6 +8,6 @@ echo "generate price"
 
 source ../.venv/bin/activate
 
-python3 ..//gd_price_generator.py
+PYTHONIOENCODING=utf8 python3 ../gd_price_generator.py
 
 echo "generate price end"
