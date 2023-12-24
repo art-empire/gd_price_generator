@@ -1,6 +1,7 @@
-wheel
-pandas
-python-slugify
 natsort
-xlrd
+pandas
+python-dotenv
+python-slugify
 # unicode
+wheel
+xlrd

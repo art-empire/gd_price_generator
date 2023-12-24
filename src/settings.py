@@ -1,6 +1,17 @@
 from pathlib import Path
 
+from dotenv import dotenv_values
+
 BASE_DIR = Path(__file__).parent.parent
+
+GOOD_OPT_PATH = BASE_DIR / 'in' / 'good-opt.xls'
+GOOD_INFO_PATH = BASE_DIR / 'in' / 'good-info.xls'
+
+config = {
+    **dotenv_values(BASE_DIR / '.env'),
+}
+
+print(config)
 
 SIZES = [
     'ns',
@@ -48,7 +59,7 @@ USER_GROUPS = {
 xls_files_list = {
     'good_opt': {
         # 'file': BASE_DIR / 'in' / 'good-opt.xls',
-        'file': BASE_DIR.parent / 'price' / 'good-opt.xls',
+        'file': GOOD_OPT_PATH,
         'sheet': 'Каталог Молодежной одежды GOOD',
         'cols': {
             0: 'product_code',
@@ -96,7 +107,7 @@ xls_files_list = {
     },
     'good_info': {
         # 'file': BASE_DIR / 'in' / 'good-info.xls',
-        'file': BASE_DIR.parent / 'price' / 'good-info.xls',
+        'file': GOOD_INFO_PATH,
         'sheet': 'Молодежной одежды GOOD',
         'cols': {
             0: 'product_code',
