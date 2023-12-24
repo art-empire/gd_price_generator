@@ -131,5 +131,4 @@ xls_files_list = {
         'skip_empty_fields': [],
         'skip_brands': [],
     }
-
 }

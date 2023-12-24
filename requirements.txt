@@ -3,4 +3,4 @@ pandas
 python-slugify
 natsort
 xlrd
-unicode
+# unicode
