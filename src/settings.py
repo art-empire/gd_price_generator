@@ -12,8 +12,8 @@ SIZES = [
     'l',
     'xl',
     '2xl',
-    '3хl',
-    '4хl',
+    '3xl',
+    '4xl',
     '5xl'
 ]
 
@@ -81,8 +81,8 @@ xls_files_list = {
             30: 'l_size',
             31: 'xl_size',
             32: '2xl_size',
-            33: '3хl_size',
-            34: '4хl_size',
+            33: '3xl_size',
+            34: '4xl_size',
             35: '5xl_size',
         },
         'skip_rows': 8,

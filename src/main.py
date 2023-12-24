@@ -99,7 +99,11 @@ class PriceGenerator:
 
             brand_product_code_path = Path(slugify(row.brand), self.get_str(row.product_code))
             file_path = self.media_path / products_path / brand_product_code_path
-            media_files_list = natsort.natsorted(file_path.glob(pattern), alg=natsort.PATH)
+            # print(file_path)
+            media_files_list = natsort.natsorted(
+                file_path.glob(pattern),
+                alg=natsort.PATH
+            )
 
             media_files = list(
                 os.path.relpath(x, self.media_path) for x in media_files_list
