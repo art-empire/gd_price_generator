@@ -186,6 +186,7 @@ class PriceGenerator:
     def get_main_price(self):
 
         def get_categories(a, b):
+            # print(a, b)
             m = ['%s///%s' % (x.strip(), y.strip()) for x in a for y in b]
             return '; '.join(m)
 
