@@ -32,12 +32,25 @@ SIZES_K = [
     '158',
 ]
 
+#USER_GROUPS = {
+#    '- 11% от 110000р': {'row': 'price-11', 'group_id': 11},
+#    '- 3% от 30000р': {'row': 'price-3', 'group_id': 10},
+#    '- 7% от 70000р': {'row': 'price-7', 'group_id': 12},
+#    'Мелкий опт от 10шт.': {'row': 'small_opt_price', 'group_id': 8},
+#    'Опт. от 15000р': {'row': 'opt_price', 'group_id': 9},
+#    '-10% от оптовой цены': {'row': 'price-10', 'group_id': 23},
+#    '-15% от оптовой цены': {'row': 'price-15', 'group_id': 24},
+#    '-20% от оптовой цены': {'row': 'price-20', 'group_id': 25},
+#    '-22% от оптовой цены': {'row': 'price-22', 'group_id': 26},
+#    '-25% от оптовой цены': {'row': 'price-25', 'group_id': 27},
+#}
+
 USER_GROUPS = {
-    '- 11% от 110000р': {'row': 'price-11', 'group_id': 11},
-    '- 3% от 30000р': {'row': 'price-3', 'group_id': 10},
-    '- 7% от 70000р': {'row': 'price-7', 'group_id': 12},
+   # '- 11% от 150000р': {'row': 'price-11', 'group_id': 11},
+    '- 3% от 50000р': {'row': 'price-3', 'group_id': 10},
+    '- 7% от 100000р': {'row': 'price-7', 'group_id': 12},
     'Мелкий опт от 10шт.': {'row': 'small_opt_price', 'group_id': 8},
-    'Опт. от 15000р': {'row': 'opt_price', 'group_id': 9},
+    'Опт. от 15000р': {'row': 'opt_price', 'group_id': 51},
     '-10% от оптовой цены': {'row': 'price-10', 'group_id': 23},
     '-15% от оптовой цены': {'row': 'price-15', 'group_id': 24},
     '-20% от оптовой цены': {'row': 'price-20', 'group_id': 25},
